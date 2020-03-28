@@ -172,6 +172,11 @@
             </th>
             <td>
               {{ this.sharedState.userInfo.username }}
+                <br v-if="this.editFlag==true">
+                <input v-if="this.editFlag==true" type="text" v-model="newUserName" />
+                <p v-if="this.newExistence == true && this.editFlag==true" class="danger">
+                    すでに使われています
+                </p>
             </td>
           </tr>
         </tbody>
@@ -182,6 +187,24 @@
             </th>
             <td>
               {{ this.sharedState.userInfo.sex }}
+              <br v-if="this.editFlag==true">
+              <label v-if="this.editFlag==true" for="man">男</label>
+              <input v-if="this.editFlag==true"
+                id="man"
+                name="sex"
+                type="radio"
+                value="男"
+                v-model="newSex"
+                checked
+              />
+              <label v-if="this.editFlag==true" for="woman">女</label>
+              <input v-if="this.editFlag==true"
+                id="woman"
+                name="sex"
+                type="radio"
+                value="女"
+                v-model="newSex"
+              />
             </td>
           </tr>
         </tbody>
@@ -192,6 +215,8 @@
             </th>
             <td>
               {{ this.sharedState.userInfo.age }}
+              <br v-if="this.editFlag==true">
+              <input v-if="this.editFlag==true" type="number" v-model="newAge" />
             </td>
           </tr>
         </tbody>
@@ -202,6 +227,8 @@
             </th>
             <td>
               {{ this.sharedState.userInfo.nationality }}
+              <br v-if="this.editFlag==true">
+              <input v-if="this.editFlag==true" type="text" v-model="newNationality" />
             </td>
           </tr>
         </tbody>
@@ -212,6 +239,8 @@
             </th>
             <td>
               {{ this.sharedState.userInfo.local }}
+              <br v-if="this.editFlag==true">
+              <input v-if="this.editFlag==true" type="text" v-model="newLocal" />
             </td>
           </tr>
         </tbody>
@@ -222,6 +251,8 @@
             </th>
             <td>
               {{ this.sharedState.userInfo.email }}
+              <br v-if="this.editFlag==true">
+              <input v-if="this.editFlag==true" type="text" v-model="newEmail" />
             </td>
           </tr>
         </tbody>
@@ -232,12 +263,16 @@
             </th>
             <td>
               {{ this.sharedState.userInfo.tel }}
+              <br v-if="this.editFlag==true">
+              <input v-if="this.editFlag==true" type="number" v-model="newTel" />
             </td>
           </tr>
         </tbody>
       </table>
       <button id="button" @click="logout" class="buttons">ログアウト</button>
       <button id="button2" @click="deleteUser" class="buttons">退会する</button>
+      <button v-if="this.editFlag==false" @click="changeEditFlag" class="buttons">編集する</button>
+      <button v-if="this.editFlag==true" @click="editUser" class="buttons">編集完了</button>
     </div>
   </div>
 </template>
@@ -262,7 +297,8 @@ export default {
       newNationality: "",
       newLocal: "",
       newEmail: "",
-      newTel: ""
+      newTel: "",
+      editFlag: false,
     };
   },
   computed: {
@@ -391,6 +427,26 @@ export default {
           });
         }
       });
+    },
+    changeEditFlag: function(){
+        this.editFlag = (!this.editFlag)
+        if(this.editFlag==true){
+            this.newUserName = this.sharedState.userInfo.username
+            this.newPassWord = this.sharedState.userInfo.password
+            this.newSex = this.sharedState.userInfo.sex
+            this.newAge = this.sharedState.userInfo.age
+            this.newNationality = this.sharedState.userInfo.nationality
+            this.newLocal = this.sharedState.userInfo.local
+            this.newEmail = this.sharedState.userInfo.email
+            this.newTel = this.sharedState.userInfo.tel
+        }
+    },
+    editUser: function(){
+        var obj = this.createObj
+        obj.usernameOrigin = this.userName
+        this.$store.dispatch("editUser",obj)
+        this.$store.dispatch("fetchData",this.newUserName)
+        this.changeEditFlag()
     }
   },
   watch: {
@@ -398,7 +454,7 @@ export default {
       if (newval != "") {
         this.$store.dispatch("getUserList");
         if (this.sharedState.userList.indexOf(newval) >= 0) {
-          this.existence = true;
+            this.existence = true;
         } else {
           this.existence = false;
         }
@@ -414,7 +470,12 @@ export default {
       if (newval != "") {
         this.$store.dispatch("getUserList");
         if (this.sharedState.userList.indexOf(newval) >= 0) {
-          this.newExistence = true;
+            if(newval!=this.userName){
+                this.newExistence = true;
+            }
+            else{
+                this.newExistence = false;
+            }
         } else {
           this.newExistence = false;
         }

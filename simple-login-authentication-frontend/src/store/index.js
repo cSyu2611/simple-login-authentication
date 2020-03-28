@@ -60,6 +60,12 @@ export default new Vuex.Store({
       .then(res => {
         console.log(res)
       })
+    },
+    async editUser(context, obj){
+      await axios.get("http://localhost:3000/editUser",{params:obj})
+      .then(res=>{
+        console.log(res)
+      })
     }
   },
   modules: {

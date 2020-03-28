@@ -72,4 +72,40 @@ router.get('/deleteUser', function(req, res, next) {
 });
 })
 
+router.get('/editUser', function(req, res, next) {
+  const usernameOrigin = '"'+req.query.usernameOrigin+'"'
+  const username = '"'+req.query.username+'"'
+  const password = '"'+req.query.password+'"'
+  const sex = '"'+req.query.sex+'"'
+  const age = Number(req.query.age)
+  const nationality = '"'+req.query.nationality+'"'
+  const local = '"'+req.query.local+'"'
+  const email = '"'+req.query.email+'"'
+  const tel = Number(req.query.tel)
+  users_db.serialize(() => {
+    users_db.run('update users set sex = '+sex+' where username = '+usernameOrigin,
+    (err,rows)=>{
+    });
+    users_db.run('update users set age = '+age+' where username = '+usernameOrigin,
+    (err,rows)=>{
+    });
+    users_db.run('update users set nationality = '+nationality+' where username = '+usernameOrigin,
+    (err,rows)=>{
+    });
+    users_db.run('update users set local = '+local+' where username = '+usernameOrigin,
+    (err,rows)=>{
+    });
+    users_db.run('update users set email = '+email+' where username = '+usernameOrigin,
+    (err,rows)=>{
+    });
+    users_db.run('update users set tel = '+tel+' where username = '+usernameOrigin,
+    (err,rows)=>{
+    });
+    users_db.run('update users set username = '+username+' where username = '+usernameOrigin,
+    (err,rows)=>{
+      res.send("success")
+    });
+});
+})
+
 module.exports = router;
